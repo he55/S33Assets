@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace S33Assets
 {
@@ -70,8 +71,12 @@ namespace S33Assets
             }
         }
 
+        public static IntPtr ppp;
+        public static IntPtr ppp2;
+
         public static Bitmap ReadBitmap(Stream stream, int index)
         {
+
             stream.Position = 0;
 
             BinaryReader binaryReader = new BinaryReader(stream);
@@ -112,6 +117,18 @@ namespace S33Assets
             bidd.d5 = binaryReader.ReadUInt16();
             bidd.d6 = binaryReader.ReadUInt16();
             bidd.d7 = binaryReader.ReadUInt16();
+
+
+
+
+            IntPtr intPtr = PInvoke.rkrs_read_image_data(ppp, index);
+            ppp2 = intPtr;
+
+            Bitmap newBitmap = new Bitmap(bidd.width, bidd.height, bidd.width * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, intPtr);
+            return newBitmap;
+
+            
+
 
             Bitmap bitmap = new Bitmap(bid._bidd.width, bid._bidd.height);
 

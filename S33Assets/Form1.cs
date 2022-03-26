@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace S33Assets
@@ -74,6 +75,14 @@ namespace S33Assets
             try
             {
                 _rkrs = RKRSFile.ReadFile(_binPath);
+               RKRSFile.ppp= PInvoke.rkrs_open_file(@"C:\Users\luckh\Downloads\BMP0.BIN");
+                unsafe
+                {
+                    _MyStruct* pp = (_MyStruct*)RKRSFile.ppp;
+                PInvoke.rkrs_parse(RKRSFile.ppp, out _MyStruct2 kk);
+
+                }
+
             }
             catch
             {
@@ -136,6 +145,7 @@ namespace S33Assets
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            PInvoke.rkrs_close_file(RKRSFile.ppp);
             if (File.Exists(BMP0_BIN))
             {
                 try
@@ -212,10 +222,20 @@ namespace S33Assets
             if (listView1.SelectedIndices.Count > 0)
             {
                 _bid = _bids[listView1.SelectedIndices[0]];
+
+                if (_bitmap != null)
+                {
+                    //_bitmap = null;
+                    //GC.Collect();
+                    //Marshal.FreeHGlobal(RKRSFile.ppp2);
+                    PInvoke.rkrs_free_image_data(RKRSFile.ppp2);
+                }
+
                 Bitmap bitmap = RKRSFile.ReadBitmap(_binPath, _bid._bindex);
                 pictureBox1.Image = bitmap;
 
                 _bitmap?.Dispose();
+
                 _bitmap = bitmap;
             }
         }
@@ -273,5 +293,80 @@ namespace S33Assets
         }
 
         #endregion
+
+
+
+       public struct _RKRS_H
+        {
+           public int offset; // BID 偏移
+           public int re1;
+           public int re2;
+           public short size; // BID 大小
+           public short count; // BID 数量
+           public short r3;
+           public ushort val; // BID 起始值
+                                //  List<BID_H> _bids;
+        };
+
+
+       public struct _BID_H
+        {
+           public int length; // 长度
+           public int offset; // 偏移
+
+            /*
+                //int _bindex;
+                //int _bid;
+                //  BIDD_H _bidd;
+                     string Id => $"BID_{_bid:X}";
+                     string Name => "";
+                     string Size => $"{_bidd.width}*{_bidd.height}";
+                     string Offset => $"0x{offset:X}";
+                     string Length => $"{length - 14}";
+                     string D3 => $"0x{_bidd.d3:X}";
+                     string D4 => $"0x{_bidd.d4:X}";
+                     string D5 => $"0x{_bidd.d5:X}";
+                      */
+        };
+
+
+      public  struct _BIDD_H
+        {
+           public short width; // 图片宽度
+           public short height; // 图片高度
+           public short d3; // 颜色深度
+           public short d4; // 压缩模式
+           public ushort d5;
+           public ushort d6;
+           public ushort d7;
+           public IntPtr data; // data image
+        }
+
+
+      public  struct _HEADER_H
+        {
+           public int code;
+           public int txt;
+        }
+
+
+      public  unsafe struct _MyStruct2
+        {
+          public  _HEADER_H* h;
+          public  _RKRS_H* rkrs;
+          public  _BID_H* bid;
+          public  _BIDD_H** ppbidd;
+        }
+
+
+       public struct _MyStruct
+        {
+          public  IntPtr pvFile;
+          public  IntPtr hFileMap;
+          public  IntPtr hFile;
+          public  _MyStruct2 mys2;
+        }
+
+
     }
 }
