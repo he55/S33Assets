@@ -289,7 +289,6 @@ namespace S33Assets
             this.columnHeader7,
             this.columnHeader8});
             this.listView1.FullRowSelect = true;
-            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(12, 86);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(249, 465);
@@ -338,6 +337,8 @@ namespace S33Assets
             // 
             this.AcceptButton = this.searchButton;
             this.AllowDrop = true;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(802, 586);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.flowLayoutPanel1);
