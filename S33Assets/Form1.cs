@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -30,6 +31,18 @@ namespace S33Assets
 #endif
         }
 
+        private int fatMet(string filePath)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = "7z2107-x64\\7z.exe";
+            psi.Arguments = $"e -y \"{filePath}\" RESOURCE\\BID\\BMP0.BIN";
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
+
+            Process process = Process.Start(psi);
+            process.WaitForExit();
+            return process.ExitCode;
+        }
+
         private void LoadFile(string filePath)
         {
             _binPath = null;
@@ -51,10 +64,8 @@ namespace S33Assets
                 toolStripStatusLabel3.Text = "正在提取资源...";
                 Application.DoEvents();
 
-                RK28FS.FS_Initialize(filePath, 0, 0);
-                int result = RK28FS.FS_WriteFileToPC("C:\\RESOURCE\\BID\\BMP0.BIN", BMP0_BIN);
-                RK28FS.FS_DeInitialize();
-                if (result < 0)
+                int result = fatMet(filePath);
+                if (result != 0)
                 {
                     MessageBox.Show("资源提取失败");
                     toolStripStatusLabel3.Text = "资源提取失败";
