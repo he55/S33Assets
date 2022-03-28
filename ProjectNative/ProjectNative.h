@@ -78,23 +78,17 @@ struct MyStruct2
 };
 
 
-struct MyStruct
-{
-    void* pvFile;
-    void* hFileMap;
-    void* hFile;
-    MyStruct2 mys2;
-};
+typedef void* rkrs_ref;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    PROJECTNATIVE_API MyStruct* rkrs_open_file(const char* pszPathName);
-    PROJECTNATIVE_API void rkrs_close_file(MyStruct* mys);
-    PROJECTNATIVE_API void rkrs_parse(MyStruct* mys, MyStruct2* mys2);
-    PROJECTNATIVE_API void* rkrs_read_image_data(MyStruct* mys, int idx);
+    PROJECTNATIVE_API rkrs_ref rkrs_open_file(const char* pszPathName);
+    PROJECTNATIVE_API void rkrs_close_file(rkrs_ref _this);
+    PROJECTNATIVE_API void rkrs_parse(rkrs_ref _this, MyStruct2* mys2);
+    PROJECTNATIVE_API void* rkrs_read_image_data(rkrs_ref _this, int idx);
     PROJECTNATIVE_API void rkrs_free_image_data(void* img);
 
 #ifdef __cplusplus

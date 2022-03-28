@@ -9,7 +9,16 @@
 #include <Windows.h>
 
 
-MyStruct* rkrs_open_file(const char* pszPathName)
+struct MyStruct
+{
+    PVOID pvFile;
+    HANDLE hFileMap;
+    HANDLE hFile;
+    MyStruct2 mys2;
+};
+
+
+rkrs_ref rkrs_open_file(const char* pszPathName)
 {
     HANDLE hFile = CreateFile(pszPathName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE)
@@ -33,13 +42,14 @@ MyStruct* rkrs_open_file(const char* pszPathName)
     assert(mys != NULL);
 
     *mys = { pvFile,hFileMap,hFile };
-    return mys;
+    return (rkrs_ref)mys;
 }
 
 
-void rkrs_close_file(MyStruct* mys)
+void rkrs_close_file(rkrs_ref _this)
 {
-    assert(mys != NULL);
+    assert(_this != NULL);
+    MyStruct* mys = (MyStruct*)_this;
 
     UnmapViewOfFile(mys->pvFile);
     CloseHandle(mys->hFileMap);
@@ -50,10 +60,11 @@ void rkrs_close_file(MyStruct* mys)
 }
 
 
-void rkrs_parse(MyStruct* mys, MyStruct2* mys2)
+void rkrs_parse(rkrs_ref _this, MyStruct2* mys2)
 {
-    assert(mys != NULL);
+    assert(_this != NULL);
     assert(mys2 != NULL);
+    MyStruct* mys = (MyStruct*)_this;
 
     void* pv = mys->pvFile;
     HEADER_H* h = (HEADER_H*)pv;
@@ -70,9 +81,10 @@ void rkrs_parse(MyStruct* mys, MyStruct2* mys2)
 }
 
 
-void* rkrs_read_image_data(MyStruct* mys, int idx)
+void* rkrs_read_image_data(rkrs_ref _this, int idx)
 {
-    assert(mys != NULL);
+    assert(_this != NULL);
+    MyStruct* mys = (MyStruct*)_this;
 
     void* pv = mys->pvFile;
     RKRS_H* rkrs = (RKRS_H*)((char*)pv + 0x30);
