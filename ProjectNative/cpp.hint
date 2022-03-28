@@ -1,0 +1,2 @@
+#define PROJECTNATIVE_API __declspec(dllexport)
+#define PROJECTNATIVE_API __declspec(dllimport)
