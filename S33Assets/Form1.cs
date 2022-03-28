@@ -14,6 +14,7 @@ namespace S33Assets
 {
     public partial class Form1 : Form
     {
+        private const string PROJECT_NAME = "S33Assets";
         private const string BMP0_BIN = "BMP0.BIN";
         private string _binPath;
         private RKRS_H _rkrs;
@@ -36,6 +37,7 @@ namespace S33Assets
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.FileName = "7z2107-x64\\7z.exe";
             psi.Arguments = $"e -y \"{filePath}\" RESOURCE\\BID\\BMP0.BIN";
+            psi.UseShellExecute = true;
             psi.WindowStyle = ProcessWindowStyle.Hidden;
 
             Process process = Process.Start(psi);
@@ -67,7 +69,7 @@ namespace S33Assets
                 int result = fatMet(filePath);
                 if (result != 0)
                 {
-                    MessageBox.Show("资源提取失败");
+                    MessageBox.Show("资源提取失败", PROJECT_NAME);
                     toolStripStatusLabel3.Text = "资源提取失败";
                     return;
                 }
@@ -88,7 +90,7 @@ namespace S33Assets
             }
             catch
             {
-                MessageBox.Show("数据加载失败");
+                MessageBox.Show("数据加载失败", PROJECT_NAME);
                 toolStripStatusLabel3.Text = "数据加载失败";
                 return;
             }
@@ -185,7 +187,7 @@ namespace S33Assets
         private void openButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Image Files (*.img)|*.img|BMP0 Files (*.bin)|*.bin";
+            openFileDialog.Filter = "Image Files|*.img|BMP0 Files|*.bin";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 LoadFile(openFileDialog.FileName);
@@ -246,7 +248,7 @@ namespace S33Assets
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.FileName = $"{_bid.Id}.png";
-            saveFileDialog.Filter = "PNG Files (*.png)|*.png";
+            saveFileDialog.Filter = "PNG Files|*.png";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
