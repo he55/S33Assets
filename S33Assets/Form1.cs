@@ -21,6 +21,8 @@ namespace S33Assets
         private BID_H _bid;
         private List<BID_H> _bids;
         private Bitmap _bitmap;
+        private IntPtr ptr;
+        private IntPtr ptr2;
 
         public Form1()
         {
@@ -87,6 +89,8 @@ namespace S33Assets
             try
             {
                 _rkrs = RKRSFile.ReadFile(_binPath);
+                ptr = PInvoke.rkrs_open_file(_binPath);
+                PInvoke.rkrs_parse(ptr, out _MyStruct2 kk);
             }
             catch
             {
@@ -149,6 +153,7 @@ namespace S33Assets
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            PInvoke.rkrs_close_file(ptr);
             if (File.Exists(BMP0_BIN))
             {
                 try
@@ -225,7 +230,16 @@ namespace S33Assets
             if (listView1.SelectedIndices.Count > 0)
             {
                 _bid = _bids[listView1.SelectedIndices[0]];
-                Bitmap bitmap = RKRSFile.ReadBitmap(_binPath, _bid._bindex);
+
+                if (_bitmap != null)
+                {
+                    PInvoke.rkrs_free_image_data(ptr2);
+                }
+
+                ptr2 = PInvoke.rkrs_read_image_data(ptr, _bid._bindex);
+                PInvoke.rkrs_read_bidd_h(ptr, _bid._bindex, out _BIDD_H bidd);
+
+                Bitmap bitmap = new Bitmap(bidd.width, bidd.height, bidd.width * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, ptr2);
                 pictureBox1.Image = bitmap;
 
                 _bitmap?.Dispose();

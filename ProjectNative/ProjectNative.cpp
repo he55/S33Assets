@@ -81,6 +81,20 @@ void rkrs_parse(rkrs_ref _this, MyStruct2* mys2)
 }
 
 
+void rkrs_read_bidd_h(rkrs_ref _this, int idx, BIDD_H* pbidd)
+{
+    assert(_this != NULL);
+    assert(pbidd != NULL);
+    MyStruct* mys = (MyStruct*)_this;
+
+    void* pv = mys->pvFile;
+    RKRS_H* rkrs = (RKRS_H*)((char*)pv + 0x30);
+    BID_H* bid = (BID_H*)((char*)pv + rkrs->offset);
+
+    *pbidd = *(BIDD_H*)((char*)pv + bid[idx].offset);
+}
+
+
 void* rkrs_read_image_data(rkrs_ref _this, int idx)
 {
     assert(_this != NULL);

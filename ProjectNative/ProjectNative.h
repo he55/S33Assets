@@ -88,6 +88,7 @@ extern "C" {
     PROJECTNATIVE_API rkrs_ref rkrs_open_file(const char* pszPathName);
     PROJECTNATIVE_API void rkrs_close_file(rkrs_ref _this);
     PROJECTNATIVE_API void rkrs_parse(rkrs_ref _this, MyStruct2* mys2);
+    PROJECTNATIVE_API void rkrs_read_bidd_h(rkrs_ref _this, int idx, BIDD_H* pbidd);
     PROJECTNATIVE_API void* rkrs_read_image_data(rkrs_ref _this, int idx);
     PROJECTNATIVE_API void rkrs_free_image_data(void* img);
 
